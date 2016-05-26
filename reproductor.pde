@@ -67,7 +67,7 @@ void setup() {
   // Inicializacion del nodo de ElasticSearch
   node = NodeBuilder.nodeBuilder()
           .settings(settings)
-          .clusterName("mycluster4")
+          .clusterName("mycluster46")
           .data(true)
           .local(true)
           .node();
@@ -152,7 +152,7 @@ void setup() {
     public void controlEvent(CallbackEvent theEvent) {  
      valor = int(theEvent.getController().getValue());
      println("hpf: "+valor);
-     //hpf.setFreq(valor);
+     hpf.setFreq(valor);
     }
   }
   );
@@ -160,7 +160,7 @@ void setup() {
     public void controlEvent(CallbackEvent theEvent) {  
      valor = int(theEvent.getController().getValue());
      println("lpf: "+valor);
-   // lpf.setFreq(valor);
+    lpf.setFreq(valor);
     }
   }
   );
@@ -187,6 +187,7 @@ void draw() {
      AudioMetaData meta = cancion.getMetaData();
     String title = meta.title();
     String autor = meta.author();
+    String album = meta.album(); //<>//
     long time2 = meta.length();
     int timeLeft = cancion.position()-cancion.length();
     
@@ -200,15 +201,24 @@ void draw() {
     textSize(21);
     textAlign(CENTER);
     text(autor + " - " +title+ "  "+timeLeftStr,580/2,30);
+    //println(album);
+    if(album == null){
+      album = "Desconocido";
+      text(album,580/2,55);
+    }else
+    text(album,580/2,55);
+    
     
   }
+  
   if (frameCount % 30 == 0) {
     thread("moveBar");
   }
 fill(random(255), random(255), random(255));
     textSize(21);
     textAlign(CENTER);
-  
+    fill(255);
+  text("Jesús Estrada",580/2,385);
   separador();
 }
 
@@ -266,9 +276,9 @@ void fileSelected(File selection) {
       bpf = new BandPass(100, 100, cancion.sampleRate());
       cancion.addEffect(bpf);
       lpf = new LowPassFS(100, cancion.sampleRate());
-    //cancion.addEffect(lpf);
+    cancion.addEffect(lpf);
      hpf = new HighPassSP(1000, cancion.sampleRate());
-     //cancion.addEffect(hpf);
+     cancion.addEffect(hpf);
      rectMode(CORNERS);
    // println("User selected " + selection.getAbsolutePath());
      cp5 = new ControlP5(this);
@@ -473,6 +483,7 @@ String[] o = list.getItem(n).get("value").toString().split(","); //<>//
 String path = o[0].substring(6);
 //println(path);
 stop();
+cancion = null;
   cancion = cadena.loadFile(path);
 play();
 //cancion = cadena.loadFile(path);
